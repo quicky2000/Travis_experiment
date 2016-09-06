@@ -1,0 +1,7 @@
+#------------------------
+# my_cuda
+#------------------------
+
+This object allow to compile very simple projects with and without CUDA for test purpose
+
+#EOF
