@@ -20,6 +20,11 @@
 #ifndef _MY_CUDA_H_
 #define _MY_CUDA_H_
 
+#include <cinttypes>
+#include <type_traits>
+#include <cstdlib>
+#include <iostream>
+
 #ifndef __NVCC__
 class dim3
 {
