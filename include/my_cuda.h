@@ -43,6 +43,7 @@ class dim3
 
 #define CUDA_KERNEL(name,...) void name(const dim3 & threadIdx, const dim3 & blockIdx, const dim3 & blockDim, const dim3 & gridDim,__VA_ARGS__)
 #define CUDA_METHOD_HD_I inline
+#define CUDA_METHOD_D_I inline
 #define gpuErrChk(ans) ans
 #define cudaFree free
 #define cudaMalloc(ptr,size) (*ptr) = (std::remove_pointer<decltype(ptr)>::type)malloc(size);
@@ -73,6 +74,7 @@ class dim3
 #else // __NVCC__
 #define CUDA_KERNEL(name,...) __global__ void name(__VA_ARGS__)
 #define CUDA_METHOD_HD_I __device__ __host__
+#define CUDA_METHOD_D_I __device__
 
 #define launch_kernels(name,grid,block,args...) { name<<<grid,block>>>(args);}
 
