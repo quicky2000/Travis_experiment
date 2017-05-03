@@ -45,6 +45,12 @@ class dim3
 #define CUDA_METHOD_HD_I inline
 #define CUDA_METHOD_D_I inline
 #define gpuErrChk(ans) ans
+
+#define cudaFuncCachePreferL1 1
+inline void cudaDeviceSetCacheConfig(unsigned int)
+{
+}
+
 #define cudaFree free
 #define cudaMalloc(ptr,size) (*ptr) = (std::remove_pointer<decltype(ptr)>::type)malloc(size);
 #define cudaMemcpy(dest, src , size, direction) memcpy(dest, src, size);
