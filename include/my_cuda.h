@@ -79,8 +79,8 @@ inline void cudaDeviceSetCacheConfig(unsigned int)
 #define __global__
 #else // __NVCC__
 #define CUDA_KERNEL(name,...) __global__ void name(__VA_ARGS__)
-#define CUDA_METHOD_HD_I __device__ __host__
-#define CUDA_METHOD_D_I __device__
+#define CUDA_METHOD_HD_I __device__ __host__ inline
+#define CUDA_METHOD_D_I __device__ inline
 
 #define launch_kernels(name,grid,block,args...) { name<<<grid,block>>>(args);}
 
