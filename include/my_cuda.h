@@ -82,7 +82,7 @@ inline void cudaDeviceSetCacheConfig(unsigned int)
 #define CUDA_METHOD_HD_I __device__ __host__ inline
 #define CUDA_METHOD_D_I __device__ inline
 
-#define launch_kernels(name,grid,block,args...) { name<<<grid,block>>>(args);}
+#define launch_kernels(name,grid,block,...) { name<<<grid,block>>>(__VA_ARGS__);}
 
 #define gpuErrChk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 inline void gpuAssert(cudaError_t p_code, const char * p_file, int p_line, bool p_abort = true)
