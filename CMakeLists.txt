@@ -56,6 +56,8 @@ endforeach(DEPENDANCY_ITEM)
 
 find_package(SDL REQUIRED)
 set(LINKED_LIBRARIES ${SDL_LIBRARY})
+message("SDL_LIBRARIES " ${SDL_LIBRARIES})
+message("SDL_LIBRARY " ${SDL_LIBRARY})
 
 #Prepare targets
 get_directory_property(HAS_PARENT PARENT_DIRECTORY)
