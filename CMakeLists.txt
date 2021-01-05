@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.11.4)
 project(edge_matching_puzzle LANGUAGES CXX)
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 set(ENABLE_CUDA_CODE off)
 
