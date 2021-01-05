@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.11.4)
 project(simple_gui LANGUAGES CXX)
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(MY_SOURCE_FILES
     include/auto_refresh_gui.h
