@@ -224,11 +224,13 @@ foreach(DEPENDANCY_ITEM IN ITEMS ${DEPENDANCY_LIST})
     endif()
 
     # Complete include directories with directories coming from dependancy because of transitivity issues with Object libraries
+    message("===> Include directories before from dependancy ${DEPENDANCY_ITEM} : " ${MY_INCLUDE_DIRECTORIES})
     if(NOT ${IS_IMPORTED})
         set(MY_INCLUDE_DIRECTORIES ${MY_INCLUDE_DIRECTORIES} $<TARGET_PROPERTY:${DEPENDANCY_ITEM},INCLUDE_DIRECTORIES>)
     else(NOT ${IS_IMPORTED})
         set(MY_INCLUDE_DIRECTORIES ${MY_INCLUDE_DIRECTORIES} $<TARGET_PROPERTY:${DEPENDANCY_ITEM},INTERFACE_INCLUDE_DIRECTORIES>)
     endif()
+    message("===> Include directories afterfrom dependancy ${DEPENDANCY_ITEM} : " ${MY_INCLUDE_DIRECTORIES})
 
 endforeach(DEPENDANCY_ITEM)
 
