@@ -77,6 +77,9 @@ inline void cudaDeviceSetCacheConfig(unsigned int)
     }                                                                                                          \
 }
 #define __global__
+#define __host__
+#define __device__
+#define __constant__
 #else // __NVCC__
 #define CUDA_KERNEL(name,...) __global__ void name(__VA_ARGS__)
 #define CUDA_METHOD_HD_I __device__ __host__ inline
