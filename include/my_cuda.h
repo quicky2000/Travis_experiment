@@ -24,8 +24,11 @@
 #include <type_traits>
 #include <cstdlib>
 #include <iostream>
+#include <cstring>
 
 #ifndef __NVCC__
+#include <array>
+
 class dim3
 {
   public:
@@ -76,6 +79,49 @@ inline void cudaDeviceSetCacheConfig(unsigned int)
 	}                                                                                                      \
     }                                                                                                          \
 }
+
+inline
+int32_t __ffs(int32_t p_value)
+{
+    return ::ffs(p_value);
+}
+
+inline
+uint32_t
+__ballot_sync(uint32_t p_mask, int32_t * p_condition)
+{
+    uint32_t l_bit = 1;
+    uint32_t l_result = 0;
+    for(unsigned int l_threadIdx_x = 0; p_mask && (l_threadIdx_x < 32); ++l_threadIdx_x)
+    {
+        if(l_bit & p_mask)
+        {
+            p_mask &= ~l_bit;
+            l_result |= (p_condition[l_threadIdx_x] != 0) << l_threadIdx_x;
+        }
+        l_bit = l_bit << 1u;
+    }
+    return l_result;
+}
+
+template <typename T>
+uint32_t
+__all_sync(uint32_t p_mask, const std::array<T,32> & p_condition)
+{
+    bool l_all = true;
+    uint32_t l_bit = 1;
+    for (unsigned int l_threadIdx_x = 0; l_all && l_threadIdx_x < 32;++l_threadIdx_x)
+    {
+        if(l_bit & p_mask)
+        {
+            p_mask &= ~l_bit;
+            l_all = static_cast<uint32_t>(p_condition[l_threadIdx_x]);
+        }
+        l_bit = l_bit << 1u;
+    }
+    return l_all;
+}
+
 #define __global__
 #define __host__
 #define __device__
