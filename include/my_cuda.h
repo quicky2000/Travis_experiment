@@ -28,6 +28,8 @@
 
 #ifndef __NVCC__
 #include <array>
+#include <functional>
+#include <cassert>
 
 class dim3
 {
@@ -86,9 +88,105 @@ int32_t __ffs(int32_t p_value)
     return ::ffs(p_value);
 }
 
+/**
+ * Variable to use when a variable declared in a CUDA thread will take
+ * different values depending on the thread in which it is
+ * @tparam T
+ */
+template <typename T>
+class pseudo_CUDA_thread_variable
+{
+  public:
+    pseudo_CUDA_thread_variable(T p_value)
+    {
+        dim3 threadIdx{0, 1, 1};
+        for (threadIdx.x = 0; threadIdx.x < 32; ++threadIdx.x)
+        {
+            m_value[threadIdx.x] = p_value;
+        }
+    }
+
+    pseudo_CUDA_thread_variable(std::function<T(const dim3 &)> p_init_func)
+    {
+        dim3 threadIdx{0, 1, 1};
+        for (threadIdx.x = 0; threadIdx.x < 32; ++threadIdx.x)
+        {
+            m_value[threadIdx.x] = p_init_func(threadIdx);
+        }
+    }
+
+    T operator[](dim3 p_dim) const
+    {
+        assert(p_dim.x < 32);
+        return m_value[p_dim.x];
+    }
+
+    T & operator[](dim3 p_dim)
+    {
+        assert(p_dim.x < 32);
+        return m_value[p_dim.x];
+    }
+
+    pseudo_CUDA_thread_variable & operator=(std::function<T(const dim3 &)> p_init_func)
+    {
+        dim3 threadIdx{0, 1, 1};
+        for (threadIdx.x = 0; threadIdx.x < 32; ++threadIdx.x)
+        {
+            m_value[threadIdx.x] = p_init_func(threadIdx);
+        }
+        return *this;
+    }
+
+    pseudo_CUDA_thread_variable & operator&=(const pseudo_CUDA_thread_variable & p_value)
+    {
+        dim3 threadIdx{0, 1, 1};
+        for (threadIdx.x = 0; threadIdx.x < 32; ++threadIdx.x)
+        {
+            m_value[threadIdx.x] &= p_value[threadIdx];
+        }
+        return *this;
+    }
+
+    pseudo_CUDA_thread_variable operator&(const pseudo_CUDA_thread_variable & p_value)
+    {
+        return pseudo_CUDA_thread_variable([&](dim3 threadIdx){return m_value[threadIdx.x] & p_value[threadIdx.x];});
+    }
+
+    pseudo_CUDA_thread_variable & operator>>(int p_shift)
+    {
+        dim3 threadIdx{0, 1, 1};
+        for (threadIdx.x = 0; threadIdx.x < 32; ++threadIdx.x)
+        {
+            m_value[threadIdx.x] = m_value[threadIdx] >> p_shift;
+        }
+        return *this;
+    }
+
+  private:
+    std::array<T,32> m_value;
+};
+
 inline
 uint32_t
 __ballot_sync(uint32_t p_mask, int32_t * p_condition)
+{
+    uint32_t l_bit = 1;
+    uint32_t l_result = 0;
+    for(unsigned int l_threadIdx_x = 0; p_mask && (l_threadIdx_x < 32); ++l_threadIdx_x)
+    {
+        if(l_bit & p_mask)
+        {
+            p_mask &= ~l_bit;
+            l_result |= (p_condition[l_threadIdx_x] != 0) << l_threadIdx_x;
+        }
+        l_bit = l_bit << 1u;
+    }
+    return l_result;
+}
+
+template <typename T>
+uint32_t
+__ballot_sync(uint32_t p_mask, const pseudo_CUDA_thread_variable<T> & p_condition)
 {
     uint32_t l_bit = 1;
     uint32_t l_result = 0;
@@ -125,6 +223,22 @@ __all_sync(uint32_t p_mask, const std::array<T,32> & p_condition)
 template <typename T>
 uint32_t
 __any_sync(uint32_t p_mask, const std::array<T,32> & p_condition)
+{
+    uint32_t l_bit = 1;
+    for(unsigned int l_threadIdx_x = 0; l_threadIdx_x < 32; ++l_threadIdx_x)
+    {
+        if((l_bit & p_mask) && p_condition[l_threadIdx_x])
+        {
+            return true;
+        }
+        l_bit = l_bit << 1u;
+    }
+    return false;
+}
+
+template <typename T>
+uint32_t
+__any_sync(uint32_t p_mask, const pseudo_CUDA_thread_variable<T> & p_condition)
 {
     uint32_t l_bit = 1;
     for(unsigned int l_threadIdx_x = 0; l_threadIdx_x < 32; ++l_threadIdx_x)
