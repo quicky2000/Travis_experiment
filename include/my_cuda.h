@@ -178,16 +178,16 @@ class pseudo_CUDA_thread_variable
 
 inline
 uint32_t
-__ballot_sync(uint32_t p_mask, int32_t * p_condition)
+__ballot_sync(uint32_t p_mask, std::function<uint32_t(dim3)> p_condition)
 {
     uint32_t l_bit = 1;
     uint32_t l_result = 0;
-    for(unsigned int l_threadIdx_x = 0; p_mask && (l_threadIdx_x < 32); ++l_threadIdx_x)
+    for(dim3 threadIdx{0, 1, 1}; p_mask && (threadIdx.x < 32); ++threadIdx.x)
     {
         if(l_bit & p_mask)
         {
             p_mask &= ~l_bit;
-            l_result |= (p_condition[l_threadIdx_x] != 0) << l_threadIdx_x;
+            l_result |= (p_condition(threadIdx.x) != 0) << threadIdx.x;
         }
         l_bit = l_bit << 1u;
     }
@@ -214,7 +214,7 @@ __ballot_sync(uint32_t p_mask, const pseudo_CUDA_thread_variable<T> & p_conditio
 
 template <typename T>
 uint32_t
-__all_sync(uint32_t p_mask, const std::array<T,32> & p_condition)
+__all_sync(uint32_t p_mask, const pseudo_CUDA_thread_variable<T> & p_condition)
 {
     bool l_all = true;
     uint32_t l_bit = 1;
@@ -228,22 +228,6 @@ __all_sync(uint32_t p_mask, const std::array<T,32> & p_condition)
         l_bit = l_bit << 1u;
     }
     return l_all;
-}
-
-template <typename T>
-uint32_t
-__any_sync(uint32_t p_mask, const std::array<T,32> & p_condition)
-{
-    uint32_t l_bit = 1;
-    for(unsigned int l_threadIdx_x = 0; l_threadIdx_x < 32; ++l_threadIdx_x)
-    {
-        if((l_bit & p_mask) && p_condition[l_threadIdx_x])
-        {
-            return true;
-        }
-        l_bit = l_bit << 1u;
-    }
-    return false;
 }
 
 template <typename T>
