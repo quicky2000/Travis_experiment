@@ -115,6 +115,16 @@ class pseudo_CUDA_thread_variable
         }
     }
 
+    auto begin()
+    {
+        return m_value.begin();
+    }
+
+    auto end()
+    {
+        return m_value.end();
+    }
+
     T operator[](dim3 p_dim) const
     {
         assert(p_dim.x < 32);
