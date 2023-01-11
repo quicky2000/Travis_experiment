@@ -17,6 +17,41 @@ set(MY_INCLUDE_DIRECTORIES
 set(DEPENDANCY_LIST "")
 #LIST(APPEND DEPENDANCY_LIST "")
 
+function(CUDA_CONVERT_FLAGS EXISTING_TARGET)
+    get_property(old_flags TARGET ${EXISTING_TARGET} PROPERTY COMPILE_OPTIONS)
+    if(NOT "${old_flags}" STREQUAL "")
+        get_property(old_cxx_standard TARGET ${EXISTING_TARGET} PROPERTY CXX_STANDARD)
+        string(REPLACE ";" "," CUDA_flags "${old_flags}")
+        # C++ standard set to 11 and not propagated due to issues when compiling with -std=c++17
+        set_property(TARGET ${EXISTING_TARGET} PROPERTY COMPILE_OPTIONS
+                     "$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CXX>>:${old_flags}>$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CUDA>>:-Xcompiler=${CUDA_flags}$<$<BOOL:${old_cxx_standard}>:,-std=c++11>$<$<CONFIG:Debug>:,-g>>"
+                     )
+    endif()
+endfunction()
+
+function(HANDLE_CUDA_FILES A_PROJECT_NAME LIST_OF_FILES)
+    # Search for CUDA files
+    foreach(SOURCE_FILE IN ITEMS ${LIST_OF_FILES})
+        if(${SOURCE_FILE} MATCHES "(.*\).cu$")
+            message("CUDA SOURCE DETECTED")
+            set(CMAKE_CUDA_HOST_COMPILER ${CMAKE_CXX_COMPILER})
+            set_target_properties(${A_PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+            CUDA_CONVERT_FLAGS(${A_PROJECT_NAME})
+            if(NOT DEFINED CMAKE_CUDA_STANDARD)
+                set(CMAKE_CUDA_STANDARD 11)
+                set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+                set(CMAKE_CUDA_FLAGS ${CMAKE_CUDA_FLAGS} " --keep --keep-dir=${CMAKE_BINARY_DIR}/${CMAKE_FILES_DIRECTORY} --source-in-ptx --ptxas-options=-v -arch=sm_75 -gencode=arch=compute_75,code=sm_75")
+                if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+                    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -G")
+                else()
+                    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -lineinfo")
+                endif()
+            endif()
+            break()
+        endif()
+    endforeach(SOURCE_FILE)
+endfunction()
+
 #------------------------------
 #- Generic part
 #------------------------------
@@ -57,12 +92,18 @@ if(IS_DIRECTORY ${HAS_PARENT})
 else()
     #set(CMAKE_VERBOSE_MAKEFILE ON)
     # string(REPLACE " " ";" DEPENDANCY_OBJECTS ${DEPENDANCY_OBJECTS})
-    add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main_${PROJECT_NAME}.cpp)
+    set(MY_SOURCE_FILES
+        ${MY_SOURCE_FILES}
+        src/test.cu
+        )
+    add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main.cpp)
     target_compile_definitions(${PROJECT_NAME} PRIVATE -D$<UPPER_CASE:${PROJECT_NAME}>_SELF_TEST)
     message(Linked librarries ${LINKED_LIBRARIES})
     target_link_libraries(${PROJECT_NAME} ${LINKED_LIBRARIES})
     target_compile_options(${PROJECT_NAME} PUBLIC -Wall -ansi -pedantic -g -O0 -DNDEBUG ${MY_CPP_FLAGS})
+    HANDLE_CUDA_FILES(${PROJECT_NAME} ${MY_SOURCE_FILES})
 endif()
+
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${MY_INCLUDE_DIRECTORIES})
 
