@@ -1,4 +1,7 @@
 depend:
+MAIN_CFLAGS:
 CFLAGS:
 LDFLAGS:
+NVCC_CFLAGS:
+NVCC_CC_CFLAGS:
 env_variables:
