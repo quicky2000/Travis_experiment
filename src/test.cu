@@ -1,5 +1,5 @@
 /* -*- C++ -*- */
-/*    opyright (C) 2023  Julien Thevenon ( julien_thevenon at yahoo.fr )
+/*    Copyright (C) 2023  Julien Thevenon ( julien_thevenon at yahoo.fr )
 
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
@@ -14,11 +14,23 @@
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
+#include "my_cuda.h"
 
-#include "test.h"
-
-int main()
+__global__
+void kernel()
 {
-    launch_kernel();
+
 }
-//EOF
+
+void launch_kernel()
+{
+    std::cout << "Launch kernels" << std::endl;
+    dim3 dimBlock(16, 4);
+    dim3 dimGrid( 1, 1);
+    kernel<<<dimGrid, dimBlock>>>();
+    cudaDeviceSynchronize();
+    gpuErrChk(cudaGetLastError());
+}
+
+
+

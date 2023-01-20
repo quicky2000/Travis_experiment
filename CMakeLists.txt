@@ -92,8 +92,10 @@ if(IS_DIRECTORY ${HAS_PARENT})
 else()
     #set(CMAKE_VERBOSE_MAKEFILE ON)
     # string(REPLACE " " ";" DEPENDANCY_OBJECTS ${DEPENDANCY_OBJECTS})
+    enable_language(CUDA)
     set(MY_SOURCE_FILES
         ${MY_SOURCE_FILES}
+        include/test.h
         src/test.cu
         )
     add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main.cpp)

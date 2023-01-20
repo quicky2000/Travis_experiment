@@ -1,5 +1,5 @@
 /* -*- C++ -*- */
-/*    opyright (C) 2023  Julien Thevenon ( julien_thevenon at yahoo.fr )
+/*    Copyright (C) 2023  Julien Thevenon ( julien_thevenon at yahoo.fr )
 
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
@@ -15,10 +15,10 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "test.h"
+#ifndef _TEST_H_
+#define _TEST_H_
 
-int main()
-{
-    launch_kernel();
-}
+void launch_kernel();
+
+#endif // _TEST_H_
 //EOF
