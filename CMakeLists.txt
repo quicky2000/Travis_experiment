@@ -100,8 +100,8 @@ else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE -D$<UPPER_CASE:${PROJECT_NAME}>_SELF_TEST)
     message(Linked librarries ${LINKED_LIBRARIES})
     target_link_libraries(${PROJECT_NAME} ${LINKED_LIBRARIES})
-    target_compile_options(${PROJECT_NAME} PUBLIC -Wall -ansi -pedantic -g -O0 -DNDEBUG ${MY_CPP_FLAGS})
-    HANDLE_CUDA_FILES(${PROJECT_NAME} ${MY_SOURCE_FILES})
+    target_compile_options(${PROJECT_NAME} PUBLIC -Wall -ansi -g -O0 -DNDEBUG ${MY_CPP_FLAGS})
+    HANDLE_CUDA_FILES(${PROJECT_NAME} "${MY_SOURCE_FILES}")
 endif()
 
 
