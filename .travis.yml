@@ -59,7 +59,8 @@ before_install:
 
 script:
 # Force CC to cc to be sure it is not gcc
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile my_cuda; make enable_cuda=1 CC=cc; fi
+# Cannot use quicky_tools due to test files in a separated directory
+#  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile my_cuda; make enable_cuda=1 CC=cc; fi
 # Cannot run test as there is no CUDA device on Travis
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then run_test.py $MY_LOCATION/repositories/my_cuda/tests; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build ; fi

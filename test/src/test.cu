@@ -24,6 +24,8 @@ void kernel()
 
 void launch_kernel()
 {
+    // Reset CUDA error status
+    cudaGetLastError();
     std::cout << "Launch kernels" << std::endl;
     dim3 dimBlock(16, 4);
     dim3 dimGrid( 1, 1);

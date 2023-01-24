@@ -95,8 +95,12 @@ else()
     enable_language(CUDA)
     set(MY_SOURCE_FILES
         ${MY_SOURCE_FILES}
-        include/test.h
-        src/test.cu
+        test/include/test.h
+        test/src/test.cu
+        )
+    set(MY_INCLUDE_DIRECTORIES
+        ${MY_INCLUDE_DIRECTORIES}
+        test/include
         )
     add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main.cpp)
     target_compile_definitions(${PROJECT_NAME} PRIVATE -D$<UPPER_CASE:${PROJECT_NAME}>_SELF_TEST)
