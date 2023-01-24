@@ -17,7 +17,7 @@ set(MY_INCLUDE_DIRECTORIES
 set(DEPENDANCY_LIST "")
 #LIST(APPEND DEPENDANCY_LIST "")
 
-function(CUDA_CONVERT_FLAGS EXISTING_TARGET)
+macro(CUDA_CONVERT_FLAGS EXISTING_TARGET)
     get_property(old_flags TARGET ${EXISTING_TARGET} PROPERTY COMPILE_OPTIONS)
     if(NOT "${old_flags}" STREQUAL "")
         get_property(old_cxx_standard TARGET ${EXISTING_TARGET} PROPERTY CXX_STANDARD)
@@ -27,9 +27,9 @@ function(CUDA_CONVERT_FLAGS EXISTING_TARGET)
                      "$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CXX>>:${old_flags}>$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CUDA>>:-Xcompiler=${CUDA_flags}$<$<BOOL:${old_cxx_standard}>:,-std=c++11>$<$<CONFIG:Debug>:,-g>>"
                      )
     endif()
-endfunction()
+endmacro()
 
-function(HANDLE_CUDA_FILES A_PROJECT_NAME LIST_OF_FILES)
+macro(HANDLE_CUDA_FILES A_PROJECT_NAME LIST_OF_FILES)
     # Search for CUDA files
     foreach(SOURCE_FILE IN ITEMS ${LIST_OF_FILES})
         if(${SOURCE_FILE} MATCHES "(.*\).cu$")
@@ -50,7 +50,7 @@ function(HANDLE_CUDA_FILES A_PROJECT_NAME LIST_OF_FILES)
             break()
         endif()
     endforeach(SOURCE_FILE)
-endfunction()
+endmacro()
 
 #------------------------------
 #- Generic part
