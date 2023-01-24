@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(MY_SOURCE_FILES
     include/my_cuda.h
+    include/CUDA_memory_managed_item.h
     )
 
 
@@ -15,7 +16,7 @@ set(MY_INCLUDE_DIRECTORIES
 
 #Create dependancy list
 set(DEPENDANCY_LIST "")
-#LIST(APPEND DEPENDANCY_LIST "")
+LIST(APPEND DEPENDANCY_LIST "quicky_exception")
 
 macro(CUDA_CONVERT_FLAGS EXISTING_TARGET)
     get_property(old_flags TARGET ${EXISTING_TARGET} PROPERTY COMPILE_OPTIONS)
@@ -97,7 +98,7 @@ else()
         ${MY_SOURCE_FILES}
         test/include/test.h
         test/src/test.cu
-        )
+        test/include/example_object.h)
     set(MY_INCLUDE_DIRECTORIES
         ${MY_INCLUDE_DIRECTORIES}
         test/include

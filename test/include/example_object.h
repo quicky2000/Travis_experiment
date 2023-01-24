@@ -1,4 +1,3 @@
-/* -*- C++ -*- */
 /*    Copyright (C) 2023  Julien Thevenon ( julien_thevenon at yahoo.fr )
 
       This program is free software: you can redistribute it and/or modify
@@ -14,31 +13,55 @@
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
+
+
+#ifndef MY_CUDA_EXAMPLE_OBJECT_H
+#define MY_CUDA_EXAMPLE_OBJECT_H
+
 #include "my_cuda.h"
-#include "example_object.h"
+#include "CUDA_memory_managed_item.h"
 
-__global__
-void kernel(example_object & p_object)
+  class example_object: public my_cuda::CUDA_memory_managed_item
 {
-    printf("Thread %i : Integer value %i", threadIdx.x, p_object.get_integer());
-    p_object.set_integer(p_object.get_integer() + 1);
+  public:
+
+    inline
+    __host__
+    example_object(uint32_t p_value);
+
+    inline
+    __host__ __device__
+    uint32_t
+    get_integer() const;
+
+    inline
+    __host__ __device__
+    void
+    set_integer(uint32_t p_value);
+
+  private:
+
+    uint32_t m_integer;
+
+};
+
+__host__
+example_object::example_object(uint32_t p_value)
+:m_integer(p_value)
+{
 }
 
-void launch_kernel()
+uint32_t
+example_object::get_integer() const
 {
-
-    std::unique_ptr<example_object> l_object{new example_object(10)};
-
-    // Reset CUDA error status
-    cudaGetLastError();
-    std::cout << "Launch kernels" << std::endl;
-    dim3 dimBlock(16, 4);
-    dim3 dimGrid( 1, 1);
-    kernel<<<dimGrid, dimBlock>>>(*l_object);
-    cudaDeviceSynchronize();
-    gpuErrChk(cudaGetLastError());
-    std::cout << "Object integer : " << l_object->get_integer() << std::endl;
+    return m_integer;
 }
 
+void
+example_object::set_integer(uint32_t p_value)
+{
+    m_integer = p_value;
+}
 
-
+#endif //MY_CUDA_EXAMPLE_OBJECT_H
+// EOF

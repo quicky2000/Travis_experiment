@@ -2,7 +2,8 @@
 
 Continuous integration with [Travis-Ci](https://app.travis-ci.com/github/quicky2000/my_cuda) : ![Build Status](https://app.travis-ci.com/github/quicky2000/my_cuda.svg?branch=master)
 
-This object allow to compile very simple projects with and without CUDA for test purpose
+This object allow to compile very simple projects with and without CUDA for test purpose.
+It also provide some helpers to manage unified memory
 
 License
 -------
