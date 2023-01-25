@@ -93,6 +93,13 @@ if(IS_DIRECTORY ${HAS_PARENT})
 else()
     #set(CMAKE_VERBOSE_MAKEFILE ON)
     # string(REPLACE " " ";" DEPENDANCY_OBJECTS ${DEPENDANCY_OBJECTS})
+    set(ENABLE_CUDA_CODE ON)
+    if(${ENABLE_CUDA_CODE})
+        set (MY_CPP_FLAGS -DENABLE_CUDA_CODE)
+    else(${ENABLE_CUDA_CODE})
+        set (MY_CPP_FLAGS -pedantic)
+    endif(${ENABLE_CUDA_CODE})
+
     enable_language(CUDA)
     set(MY_SOURCE_FILES
         ${MY_SOURCE_FILES}
