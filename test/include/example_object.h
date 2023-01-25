@@ -20,47 +20,102 @@
 
 #include "my_cuda.h"
 #include "CUDA_memory_managed_item.h"
+#include "CUDA_strong_primitive.h"
 
-  class example_object: public my_cuda::CUDA_memory_managed_item
+using height_t = my_cuda::CUDA_strong_primitive<uint32_t, struct height>;
+using width_t = my_cuda::CUDA_strong_primitive<uint32_t, struct width>;
+using area_t = my_cuda::CUDA_strong_primitive<uint32_t, struct area>;
+
+class example_object: public my_cuda::CUDA_memory_managed_item
 {
   public:
 
     inline
     __host__
-    example_object(uint32_t p_value);
-
-    inline
-    __host__ __device__
-    uint32_t
-    get_integer() const;
+    example_object(height_t p_height
+                  ,width_t p_width
+                  );
 
     inline
     __host__ __device__
     void
-    set_integer(uint32_t p_value);
+    set(height_t p_value);
+
+    inline
+    __host__ __device__
+    void
+    set(width_t p_value);
+
+    inline
+    __host__ __device__
+    height_t
+    get_height() const;
+
+    inline
+    __host__ __device__
+    width_t
+    get_width() const;
+
+    inline
+    __host__ __device__
+    area_t
+    compute_area() const;
 
   private:
 
-    uint32_t m_integer;
+    height_t m_height;
+    width_t m_with;
 
 };
 
+//-----------------------------------------------------------------------------
 __host__
-example_object::example_object(uint32_t p_value)
-:m_integer(p_value)
+example_object::example_object(height_t p_height
+                              ,width_t p_width
+                              )
+:m_height(p_height)
+,m_with(p_width)
 {
 }
 
-uint32_t
-example_object::get_integer() const
-{
-    return m_integer;
-}
-
+//-----------------------------------------------------------------------------
+__host__ __device__
 void
-example_object::set_integer(uint32_t p_value)
+example_object::set(height_t p_value)
 {
-    m_integer = p_value;
+    m_height = p_value;
+}
+
+//-----------------------------------------------------------------------------
+__host__ __device__
+void
+example_object::set(width_t p_value)
+{
+    m_with = p_value;
+}
+
+//-----------------------------------------------------------------------------
+__host__ __device__
+height_t
+example_object::get_height() const
+{
+    return m_height;
+}
+
+//-----------------------------------------------------------------------------
+__host__ __device__
+width_t
+example_object::get_width() const
+{
+    return m_with;
+}
+
+//-----------------------------------------------------------------------------
+__host__ __device__
+area_t
+example_object::compute_area() const
+{
+    return (area_t )((width_t::base_type)m_with) * ((height_t::base_type)m_height);
 }
 
 #endif //MY_CUDA_EXAMPLE_OBJECT_H
