@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(MY_SOURCE_FILES
     include/my_cuda.h
+    include/CUDA_info.h
     include/CUDA_memory_managed_array.h
     include/CUDA_memory_managed_item.h
     include/CUDA_strong_primitive.h

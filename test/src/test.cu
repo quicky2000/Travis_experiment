@@ -17,6 +17,7 @@
 #include "my_cuda.h"
 #include "example_object.h"
 #include "CUDA_memory_managed_array.h"
+#include "CUDA_info.h"
 
 __global__
 void kernel(example_object & p_object
@@ -29,6 +30,12 @@ void kernel(example_object & p_object
 
 void launch_kernel()
 {
+    int l_nb_cuda_device = my_cuda::CUDA_info();
+
+    if(!l_nb_cuda_device)
+    {
+        return;
+    }
 
     std::unique_ptr<example_object> l_object{new example_object((height_t)4, (width_t)10)};
     std::unique_ptr<my_cuda::CUDA_memory_managed_array<uint32_t>> l_cuda_array{new my_cuda::CUDA_memory_managed_array<uint32_t>(32, 0)};
