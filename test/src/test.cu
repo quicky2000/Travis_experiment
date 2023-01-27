@@ -19,6 +19,16 @@
 #include "CUDA_memory_managed_array.h"
 #include "CUDA_memory_managed_pointer.h"
 #include "CUDA_info.h"
+#include <nvfunctional>
+
+
+__device__
+void apply_lambda(my_cuda::CUDA_memory_managed_array<uint32_t> & p_array
+                 ,nvstd::function<uint32_t(uint32_t)> p_lamda
+                 )
+{
+    p_array[threadIdx.x] = p_lamda(p_array[threadIdx.x]);
+}
 
 __global__
 void kernel(example_object & p_object
@@ -28,6 +38,11 @@ void kernel(example_object & p_object
 {
     printf("Thread %i %i: %i %i -> %i\n", threadIdx.x, threadIdx.y, (width_t::base_type)p_object.get_width(), (height_t::base_type)p_object.get_height(), (area_t::base_type)p_object_ptr->compute_area());
     p_array[threadIdx.x] = threadIdx.x;
+    auto l_lambda =[&](uint32_t p_value) -> u_int32_t
+    {
+        return p_value * ((threadIdx.x % 2 ) ? 10 : 1);
+    };
+    apply_lambda(p_array, l_lambda);
 }
 
 void launch_kernel()
