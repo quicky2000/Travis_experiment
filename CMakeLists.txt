@@ -9,6 +9,7 @@ set(MY_SOURCE_FILES
     include/CUDA_info.h
     include/CUDA_memory_managed_array.h
     include/CUDA_memory_managed_item.h
+    include/CUDA_memory_managed_pointer.h
     include/CUDA_strong_primitive.h
     )
 
