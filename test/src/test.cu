@@ -19,6 +19,7 @@
 #include "CUDA_memory_managed_array.h"
 #include "CUDA_memory_managed_pointer.h"
 #include "CUDA_info.h"
+#include "CUDA_utils.h"
 #include <nvfunctional>
 
 
@@ -43,6 +44,30 @@ void kernel(example_object & p_object
         return p_value * ((threadIdx.x % 2 ) ? 10 : 1);
     };
     apply_lambda(p_array, l_lambda);
+}
+
+__global__
+void kernel_min(my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_dest
+               ,const my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_src
+               )
+{
+    p_array_dest[threadIdx.x] = my_cuda::reduce_min_sync(p_array_src[threadIdx.x]);
+}
+
+__global__
+void kernel_max(my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_dest
+               ,const my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_src
+               )
+{
+    p_array_dest[threadIdx.x] = my_cuda::reduce_max_sync(p_array_src[threadIdx.x]);
+}
+
+__global__
+void kernel_add(my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_dest
+               ,const my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_src
+               )
+{
+    p_array_dest[threadIdx.x] = my_cuda::reduce_add_sync(p_array_src[threadIdx.x]);
 }
 
 void launch_kernel()
@@ -70,6 +95,42 @@ void launch_kernel()
     for(unsigned int l_index = 0; l_index < 32; ++l_index)
     {
         std::cout << "Array[" << l_index << "] = " << (*l_cuda_array)[l_index] << std::endl;
+    }
+
+    std::unique_ptr<my_cuda::CUDA_memory_managed_array<uint32_t>> l_cuda_array_result{new my_cuda::CUDA_memory_managed_array<uint32_t>(32, 0)};
+
+    // Reset CUDA error status
+    cudaGetLastError();
+    std::cout << "Launch kernel_min" << std::endl;
+    dim3 dim_block_warp(32, 1);
+    kernel_min<<<dimGrid, dim_block_warp>>>(*l_cuda_array_result, *l_cuda_array);
+    cudaDeviceSynchronize();
+    gpuErrChk(cudaGetLastError());
+    for(unsigned int l_index = 0; l_index < 32; ++l_index)
+    {
+        std::cout << "Array[" << l_index << "] = " << (*l_cuda_array_result)[l_index] << std::endl;
+    }
+
+    // Reset CUDA error status
+    cudaGetLastError();
+    std::cout << "Launch kernel_max" << std::endl;
+    kernel_max<<<dimGrid, dim_block_warp>>>(*l_cuda_array_result, *l_cuda_array);
+    cudaDeviceSynchronize();
+    gpuErrChk(cudaGetLastError());
+    for(unsigned int l_index = 0; l_index < 32; ++l_index)
+    {
+        std::cout << "Array[" << l_index << "] = " << (*l_cuda_array_result)[l_index] << std::endl;
+    }
+
+    // Reset CUDA error status
+    cudaGetLastError();
+    std::cout << "Launch kernel_add" << std::endl;
+    kernel_add<<<dimGrid, dim_block_warp>>>(*l_cuda_array_result, *l_cuda_array);
+    cudaDeviceSynchronize();
+    gpuErrChk(cudaGetLastError());
+    for(unsigned int l_index = 0; l_index < 32; ++l_index)
+    {
+        std::cout << "Array[" << l_index << "] = " << (*l_cuda_array_result)[l_index] << std::endl;
     }
 }
 

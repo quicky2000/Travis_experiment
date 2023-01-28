@@ -11,7 +11,8 @@ set(MY_SOURCE_FILES
     include/CUDA_memory_managed_item.h
     include/CUDA_memory_managed_pointer.h
     include/CUDA_strong_primitive.h
-    )
+    include/CUDA_utils.h
+   )
 
 
 # List header directories in project
