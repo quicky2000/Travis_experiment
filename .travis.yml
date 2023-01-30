@@ -66,4 +66,7 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build ; fi
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER=/usr/local/cuda-11.1/bin/nvcc $QUICKY_REPOSITORY/my_cuda
   - make
+  - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER=/usr/local/cuda-11.1/bin/nvcc -DENABLE_CUDA_CODE=off $QUICKY_REPOSITORY/my_cuda
+  - make
+  - run_test.py $QUICKY_REPOSITORY/my_cuda/tests
 #EOF

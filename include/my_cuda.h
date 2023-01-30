@@ -59,6 +59,9 @@ inline void cudaDeviceSetCacheConfig(unsigned int)
 #define cudaFree free
 #define cudaMalloc(ptr,size) (*ptr) = (std::remove_pointer<decltype(ptr)>::type)malloc(size);
 #define cudaMemcpy(dest, src , size, direction) memcpy(dest, src, size);
+#define cudaGetLastError() {}
+#define cudaDeviceSynchronize() {}
+
 #define launch_kernels(name,grid,block,...) { dim3 l_blockIdx(0,0,0);                                          \
   for(l_blockIdx.z = 0 ; l_blockIdx.z < grid.z ; ++l_blockIdx.z)                                               \
     {                                                                                                          \

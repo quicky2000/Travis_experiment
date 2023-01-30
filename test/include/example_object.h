@@ -26,7 +26,10 @@ using height_t = my_cuda::CUDA_strong_primitive<uint32_t, struct height>;
 using width_t = my_cuda::CUDA_strong_primitive<uint32_t, struct width>;
 using area_t = my_cuda::CUDA_strong_primitive<uint32_t, struct area>;
 
-class example_object: public my_cuda::CUDA_memory_managed_item
+class example_object
+#ifdef ENABLE_CUDA_CODE
+: public my_cuda::CUDA_memory_managed_item
+#endif // ENABLE_CUDA_CODE
 {
   public:
 

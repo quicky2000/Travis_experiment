@@ -14,21 +14,11 @@
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#define LOG_EXECUTION
 
-#include "test.h"
+#ifndef _TEST_IF_H_
+#define _TEST_IF_H_
 
-void launch_kernel()
-{
-    int l_nb_cuda_device = my_cuda::CUDA_info();
+void launch_kernel();
 
-    if(!l_nb_cuda_device)
-    {
-        return;
-    }
-
-    launcher();
-}
-
-
-
+#endif // _TEST_IF_H_
+//EOF

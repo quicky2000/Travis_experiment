@@ -19,6 +19,9 @@
 #define MY_CUDA_CUDA_UTILS_H
 
 #include "my_cuda.h"
+#ifndef ENABLE_CUDA_CODE
+#include <numeric>
+#endif // ENABLE_CUDA_CODE
 
 namespace my_cuda
 {

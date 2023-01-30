@@ -99,23 +99,31 @@ if(IS_DIRECTORY ${HAS_PARENT})
 else()
     #set(CMAKE_VERBOSE_MAKEFILE ON)
     # string(REPLACE " " ";" DEPENDANCY_OBJECTS ${DEPENDANCY_OBJECTS})
-    set(ENABLE_CUDA_CODE ON)
+    if (NOT DEFINED ENABLE_CUDA_CODE)
+        set(ENABLE_CUDA_CODE ON)
+    endif ()
     if(${ENABLE_CUDA_CODE})
         set (MY_CPP_FLAGS -DENABLE_CUDA_CODE)
+        enable_language(CUDA)
+        set(MY_SOURCE_FILES
+            ${MY_SOURCE_FILES}
+            test/src/test.cu
+           )
     else(${ENABLE_CUDA_CODE})
         set (MY_CPP_FLAGS -pedantic)
     endif(${ENABLE_CUDA_CODE})
 
-    enable_language(CUDA)
     set(MY_SOURCE_FILES
         ${MY_SOURCE_FILES}
+        test/include/test_if.h
         test/include/test.h
-        test/src/test.cu
-        test/include/example_object.h)
+        test/include/example_object.h
+        test/src/test.cpp
+       )
     set(MY_INCLUDE_DIRECTORIES
         ${MY_INCLUDE_DIRECTORIES}
         test/include
-        )
+       )
     add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main.cpp)
     target_compile_definitions(${PROJECT_NAME} PRIVATE -D$<UPPER_CASE:${PROJECT_NAME}>_SELF_TEST)
     message(Linked librarries ${LINKED_LIBRARIES})

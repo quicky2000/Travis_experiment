@@ -1,5 +1,6 @@
-/* -*- C++ -*- */
-/*    Copyright (C) 2023  Julien Thevenon ( julien_thevenon at yahoo.fr )
+/*
+      This file is part of my_cuda
+      Copyright (C) 2023  Julien Thevenon ( julien_thevenon at yahoo.fr )
 
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
@@ -14,21 +15,19 @@
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#define LOG_EXECUTION
 
+/**
+ * CPU alternative implementation to debug algorithm.
+ * Corresponding CUDA implementation is in CUDA_glutton_max.cu
+ */
+#ifndef ENABLE_CUDA_CODE
+#define LOG_EXECUTION
 #include "test.h"
 
 void launch_kernel()
 {
-    int l_nb_cuda_device = my_cuda::CUDA_info();
-
-    if(!l_nb_cuda_device)
-    {
-        return;
-    }
-
     launcher();
 }
-
-
+#endif // ENABLE_CUDA_CODE
+// EOF
 
