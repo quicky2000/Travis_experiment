@@ -124,7 +124,7 @@ else()
         ${MY_INCLUDE_DIRECTORIES}
         test/include
        )
-    add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main.cpp)
+    add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} test/src/main.cpp)
     target_compile_definitions(${PROJECT_NAME} PRIVATE -D$<UPPER_CASE:${PROJECT_NAME}>_SELF_TEST)
     message(Linked librarries ${LINKED_LIBRARIES})
     target_link_libraries(${PROJECT_NAME} ${LINKED_LIBRARIES})
