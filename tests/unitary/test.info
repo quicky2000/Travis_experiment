@@ -168,4 +168,21 @@ expected_stdout_string:Launch kernel_max
 expected_stdout_string:    Max = 150
 expected_stdout_string:Launch kernel_add
 expected_stdout_string:    Sum = 696
+expected_stdout_string:Launch kernel_scoped
+expected_stdout_string:    Thread  0 : Scoped = 1100
+expected_stdout_string:    Thread  1 : Scoped = 2000
+expected_stdout_string:    Thread  2 : Scoped = 20200
+expected_stdout_string:    Thread  3 : Scoped = 6000
+expected_stdout_string:    Thread  4 : Scoped = 800
+expected_stdout_string:    Thread  5 : Scoped = 10000
+expected_stdout_string:    Thread  6 : Scoped = 1200
+expected_stdout_string:    Thread  7 : Scoped = 14000
+expected_stdout_string:    Thread  8 : Scoped = 1600
+expected_stdout_string:    Thread  9 : Scoped = 18000
+expected_stdout_string:    Thread 10 : Scoped = 2000
+expected_stdout_string:    Thread 11 : Scoped = 22000
+expected_stdout_string:    Thread 12 : Scoped = 2400
+expected_stdout_string:    Thread 13 : Scoped = 26000
+expected_stdout_string:    Thread 14 : Scoped = 2800
+expected_stdout_string:    Thread 15 : Scoped = 30000
 #EOF

@@ -170,6 +170,62 @@ void kernel_add(my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_dest
 #endif // ENABLE_CUDA_CODE
 }
 
+__global__
+void kernel_scope(my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_dest
+                 ,const my_cuda::CUDA_memory_managed_array<uint32_t> & p_array_src
+                 )
+{
+    class unvailability_lock_gard
+    {
+      public:
+        inline
+        __device__
+        unvailability_lock_gard(uint32_t & p_ref):
+        m_ref(p_ref)
+        {
+        }
+
+        inline
+        __device__
+        ~unvailability_lock_gard()
+        {
+            m_ref *= 100;
+        }
+       private:
+        uint32_t & m_ref;
+    };
+
+#ifndef ENABLE_CUDA_CODE
+    dim3 threadIdx{0,0,0};
+    for(threadIdx.x = 0; threadIdx.x < 32; ++threadIdx.x)
+    {
+#endif // ENABLE_CUDA_CODE
+    uint32_t l_value = p_array_src[threadIdx.x];
+    {
+        unvailability_lock_gard l_guard(l_value);
+        switch(l_value)
+        {
+            case 0:
+                l_value = 11;
+                break;
+            case 2:
+                l_value = 202;
+                break;
+            default:
+                l_value *= 2;
+        }
+    }
+    p_array_dest[threadIdx.x] = l_value;
+#ifdef ENABLE_CUDA_CODE
+    my_cuda::print_mask(2, 0xFFFF, "Scoped = %" PRIu32 "\n", l_value);
+#else // ENABLE_CUDA_CODE
+    my_cuda::print_mask(2, 0xFFFF, threadIdx, "Scoped = %" PRIu32 "\n", l_value);
+#endif // ENABLE_CUDA_CODE
+#ifndef ENABLE_CUDA_CODE
+    }
+#endif // ENABLE_CUDA_CODE
+}
+
 void launcher()
 {
     std::unique_ptr<example_object> l_object{new example_object((height_t)4, (width_t)10)};
@@ -222,6 +278,17 @@ void launcher()
     kernel_add<<<dimGrid, dim_block_warp>>>(*l_cuda_array_result, *l_cuda_array);
 #else // ENABLE_CUDA_CODE
     kernel_add(*l_cuda_array_result, *l_cuda_array);
+#endif // ENABLE_CUDA_CODE
+    cudaDeviceSynchronize();
+    gpuErrChk(cudaGetLastError());
+
+    // Reset CUDA error status
+    cudaGetLastError();
+    std::cout << "Launch kernel_scoped" << std::endl;
+#ifdef ENABLE_CUDA_CODE
+    kernel_scope<<<dimGrid, dim_block_warp>>>(*l_cuda_array_result, *l_cuda_array);
+#else // ENABLE_CUDA_CODE
+    kernel_scope(*l_cuda_array_result, *l_cuda_array);
 #endif // ENABLE_CUDA_CODE
     cudaDeviceSynchronize();
     gpuErrChk(cudaGetLastError());
