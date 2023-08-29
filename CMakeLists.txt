@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11.4)
 project(my_cuda)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(MY_SOURCE_FILES
     include/my_cuda.h
@@ -31,7 +31,7 @@ macro(CUDA_CONVERT_FLAGS EXISTING_TARGET)
         string(REPLACE ";" "," CUDA_flags "${old_flags}")
         # C++ standard set to 14 and not propagated due to issues when compiling with -std=c++17
         set_property(TARGET ${EXISTING_TARGET} PROPERTY COMPILE_OPTIONS
-                     "$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CXX>>:${old_flags}>$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CUDA>>:-Xcompiler=${CUDA_flags}$<$<BOOL:${old_cxx_standard}>:,-std=c++14>$<$<CONFIG:Debug>:,-g>>"
+                     "$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CXX>>:${old_flags}>$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CUDA>>:-Xcompiler=${CUDA_flags}$<$<BOOL:${old_cxx_standard}>:,-std=c++17>$<$<CONFIG:Debug>:,-g>>"
                      )
     endif()
 endmacro()
