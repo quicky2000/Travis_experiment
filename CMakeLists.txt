@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11.4)
 project(my_cuda)
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 
 set(MY_SOURCE_FILES
