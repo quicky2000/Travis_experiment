@@ -29,9 +29,9 @@ macro(CUDA_CONVERT_FLAGS EXISTING_TARGET)
     if(NOT "${old_flags}" STREQUAL "")
         get_property(old_cxx_standard TARGET ${EXISTING_TARGET} PROPERTY CXX_STANDARD)
         string(REPLACE ";" "," CUDA_flags "${old_flags}")
-        # C++ standard set to 11 and not propagated due to issues when compiling with -std=c++17
+        # C++ standard set to 14 and not propagated due to issues when compiling with -std=c++17
         set_property(TARGET ${EXISTING_TARGET} PROPERTY COMPILE_OPTIONS
-                     "$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CXX>>:${old_flags}>$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CUDA>>:-Xcompiler=${CUDA_flags}$<$<BOOL:${old_cxx_standard}>:,-std=c++11>$<$<CONFIG:Debug>:,-g>>"
+                     "$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CXX>>:${old_flags}>$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CUDA>>:-Xcompiler=${CUDA_flags}$<$<BOOL:${old_cxx_standard}>:,-std=c++14>$<$<CONFIG:Debug>:,-g>>"
                      )
     endif()
 endmacro()
