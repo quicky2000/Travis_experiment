@@ -12,8 +12,8 @@ matrix:
       sudo: required
       dist: bionic
       compiler: gcc
-#    - os: osx
-#      osx_image: xcode10.3
+    - os: osx
+      osx_image: xcode14.2
 
 language: cpp
 
