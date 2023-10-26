@@ -50,6 +50,15 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libmicrohttpd-dev; fi
 # End of Microhttpd specific part
 #-----------------------
+# Display some tools versions
+# ---------------------------
+  - g++ --version
+  - cmake --version
+# End of version display
+# ----------------------
+  - cuda_branch=1
+  - echo $TRAVIS_BRANCH | grep -i cuda || cuda_branch=0
+  - if [[ "$cuda_branch" == "0" ]]; then echo "non-CUDA branch"; else echo "CUDA branch"; fi
   - MY_LOCATION=`pwd`
   - echo $MY_LOCATION
   - mkdir ../repositories
