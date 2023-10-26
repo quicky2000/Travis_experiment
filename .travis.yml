@@ -1,0 +1,82 @@
+matrix:
+  include:
+    - os: linux
+      sudo: required
+      dist: jammy
+      compiler: gcc
+      env: DISTRIB_NAME=jammy
+    - os: linux
+      sudo: required
+      dist: focal
+      compiler: gcc
+      env: DISTRIB_NAME=focal
+    - os: linux
+      sudo: required
+      dist: bionic
+      compiler: gcc
+      env: DISTRIB_NAME=bionic
+    - os: osx
+      osx_image: xcode14.2
+      env: DISTRIB_NAME=macos
+
+language: cpp
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+# g++ 10 specific part
+#-----------------------
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install g++-10; fi
+  - if [[ "$DISTRIB_NAME" == "focal" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9; fi
+  - if [[ "$DISTRIB_NAME" == "focal" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 ; fi
+  - if [[ "$DISTRIB_NAME" == "focal" ]]; then sudo update-alternatives --set gcc /usr/bin/gcc-10 ; fi
+# End of g++ 10 specific part
+#-----------------------
+# SDL1.2 specific part
+#-----------------------
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sdl; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libsdl1.2-dev; fi
+# End of SDL1.2 specific part
+#-----------------------
+# GLPK specific part
+#-----------------------
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install glpk; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libglpk-dev; fi
+# End of GLPK specific part
+#-----------------------
+# Microhttpd specific part
+#-----------------------
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libmicrohttpd; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libmicrohttpd-dev; fi
+# End of Microhttpd specific part
+#-----------------------
+  - MY_LOCATION=`pwd`
+  - echo $MY_LOCATION
+  - mkdir ../repositories
+  - cd ..
+  - mv $MY_LOCATION repositories/Travis_experiment
+  - QUICKY_REPOSITORY=`pwd`/repositories
+  - export QUICKY_REPOSITORY
+  - MY_LOCATION=`pwd`
+  - echo $MY_LOCATION
+  - cd $MY_LOCATION/repositories
+  - git clone https://github.com/quicky2000/quicky_exception.git
+  - git clone https://github.com/quicky2000/quicky_tools.git
+  - cd quicky_tools/setup
+  - . setup.sh
+  - EXT_MICROHTTPD_INC_DIR=/usr/include
+  - export EXT_MICROHTTPD_INC_DIR
+  - EXT_MICROHTTPD_LIB_DIR=/usr/lib/x86_64-linux-gnu/
+  - export EXT_MICROHTTPD_LIB_DIR
+  - cd $MY_LOCATION
+  - chmod a+x repositories/quicky_tools/bin/*
+  - mkdir build
+  - cd build
+
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile Travis_experiment; make test; ./bin/Travis_experiment.exe; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build ; fi
+  - cmake $QUICKY_REPOSITORY/Travis_experiment
+  - make
+  - ./Travis_experiment
+#EOF

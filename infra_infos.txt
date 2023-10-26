@@ -1,0 +1,6 @@
+depend:quicky_exception
+MAIN_CFLAGS:-Wall -pedantic -g -std=c++11 -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -O3 -DNDEBUG
+MAIN_LDFLAGS:
+CFLAGS:
+LDFLAGS:
+env_variables:
