@@ -14,27 +14,26 @@ matrix:
 language: cpp
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - sudo apt-get update
 # g++ 10 specific part
 #-----------------------
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install g++-10; fi
+  - sudo apt-get -y install g++-10
   - if [[ "$DISTRIB_NAME" == "focal" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9; fi
   - if [[ "$DISTRIB_NAME" == "focal" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 ; fi
   - if [[ "$DISTRIB_NAME" == "focal" ]]; then sudo update-alternatives --set gcc /usr/bin/gcc-10 ; fi
 # End of g++ 10 specific part
 # CUDA specific part
 #-----------------------
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install linux-headers-$(uname -r); fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then distribution=$(. /etc/os-release;echo $ID$VERSION_ID | sed -e 's/\.//g'); fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-$distribution.pin; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo mv cuda-$distribution.pin /etc/apt/preferences.d/cuda-repository-pin-600; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/7fa2af80.pub; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/3bf863cc.pub; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "deb https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64 /" | sudo tee /etc/apt/sources.list.d/cuda.list; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install cuda-11-1; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then PATH=/usr/local/cuda-11.1/bin/:$PATH ; fi
+  - sudo apt-get install linux-headers-$(uname -r)
+  - distribution=$(. /etc/os-release;echo $ID$VERSION_ID | sed -e 's/\.//g')
+  - wget https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-$distribution.pin
+  - sudo mv cuda-$distribution.pin /etc/apt/preferences.d/cuda-repository-pin-600
+  - sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/7fa2af80.pub
+  - sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/3bf863cc.pub
+  - echo "deb https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64 /" | sudo tee /etc/apt/sources.list.d/cuda.list
+  - sudo apt-get update
+  - sudo apt-get -y install cuda-11-1
+  - PATH=/usr/local/cuda-11.1/bin/:$PATH
 # End of CUDA specific part
 #-----------------------
   - MY_LOCATION=`pwd`
@@ -63,7 +62,7 @@ script:
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile my_cuda; make enable_cuda=1 CC=cc; fi
 # Cannot run test as there is no CUDA device on Travis
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then run_test.py $MY_LOCATION/repositories/my_cuda/tests; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build ; fi
+  - cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build ; fi
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER=/usr/local/cuda-11.1/bin/nvcc $QUICKY_REPOSITORY/my_cuda
   - make
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER=/usr/local/cuda-11.1/bin/nvcc -DENABLE_CUDA_CODE=off $QUICKY_REPOSITORY/my_cuda
