@@ -13,7 +13,7 @@ Build
 -----
 
 Build process is the same used in [Travis file](.travis.yml)
-Reference build can be found [here](https://travis-ci.com/quicky2000/my_cuda)
+Reference build can be found [here](https://app.travis-ci.com/github/quicky2000/my_cuda)
 
 CUDA
 -----
