@@ -19,6 +19,7 @@
 #define MY_CUDA_CUDA_STRONG_PRIMITIVE_H
 
 #include "my_cuda.h"
+#include <limits>
 
 namespace my_cuda
 {
@@ -178,6 +179,14 @@ namespace my_cuda
 
         T m_value;
     };
+
+    //-------------------------------------------------------------------------
+#ifdef ENABLE_CUDA_CODE
+    template <typename T, typename PHANTOM>
+    __host__ __device__
+    CUDA_strong_primitive<T, PHANTOM>::CUDA_strong_primitive()
+    {}
+#endif // ENABLE_CUDA_CODE
 
     //-------------------------------------------------------------------------
     template <typename T, typename PHANTOM>
@@ -402,6 +411,193 @@ namespace my_cuda
     }
 
 }
+namespace std
+{
+    template<typename T, typename PHANTOM>
+    struct [[maybe_unused]] is_integral<my_cuda::CUDA_strong_primitive<T, PHANTOM>>
+    {
+      public:
+        static constexpr bool value = is_integral<T>::value;
+    };
 
+    template<typename T, typename PHANTOM>
+    struct [[maybe_unused]] is_arithmetic<my_cuda::CUDA_strong_primitive<T, PHANTOM>>
+    {
+      public:
+        static constexpr bool value = is_arithmetic<T>::value;
+    };
+
+    template<typename T, typename PHANTOM>
+    struct [[maybe_unused]] is_scalar<my_cuda::CUDA_strong_primitive<T, PHANTOM>>
+    {
+      public:
+        static constexpr bool value = is_scalar<T>::value;
+    };
+
+    template <typename T, typename PHANTOM>
+    class is_signed<my_cuda::CUDA_strong_primitive<T, PHANTOM> >
+    {
+      public:
+        static const bool value = is_signed<T>::value;
+    };
+
+    template <typename T, typename PHANTOM>
+    class make_signed<my_cuda::CUDA_strong_primitive<T, PHANTOM> >
+    {
+      public:
+        typedef my_cuda::CUDA_strong_primitive<typename std::make_signed<T>::type, PHANTOM> type;
+    };
+
+    template <typename T, typename PHANTOM>
+    class make_unsigned<my_cuda::CUDA_strong_primitive<T, PHANTOM> >
+    {
+      public:
+        typedef my_cuda::CUDA_strong_primitive<typename std::make_unsigned<T>::type, PHANTOM> type;
+    };
+
+    template <typename T, typename PHANTOM>
+    class numeric_limits<my_cuda::CUDA_strong_primitive<T, PHANTOM> >
+    {
+      public:
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_specialized = std::numeric_limits<T>::is_specialized;
+
+        static
+        constexpr my_cuda::CUDA_strong_primitive<T, PHANTOM> min() noexcept
+        {
+            return my_cuda::CUDA_strong_primitive<T, PHANTOM>(std::numeric_limits<T>::min());
+        }
+
+        static
+        constexpr my_cuda::CUDA_strong_primitive<T, PHANTOM> max() noexcept
+        {
+            return my_cuda::CUDA_strong_primitive<T, PHANTOM>(std::numeric_limits<T>::max());
+        }
+
+        static
+        constexpr my_cuda::CUDA_strong_primitive<T, PHANTOM> lowest() noexcept
+        {
+            return my_cuda::CUDA_strong_primitive<T, PHANTOM>(std::numeric_limits<T>::lowest());
+        }
+
+        [[maybe_unused]]
+        static
+        constexpr int digits = std::numeric_limits<T>::digits;
+
+        [[maybe_unused]]
+        static
+        constexpr int digits10 = std::numeric_limits<T>::digits10;
+
+        [[maybe_unused]]
+        static
+        constexpr int max_digits10 = std::numeric_limits<T>::max_digits10;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_signed = std::numeric_limits<T>::is_signed;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_integer = std::numeric_limits<T>::is_integer;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_exact = std::numeric_limits<T>::is_exact;
+
+        [[maybe_unused]]
+        static
+        constexpr int radix = std::numeric_limits<T>::radix;
+
+        static
+        constexpr my_cuda::CUDA_strong_primitive<T, PHANTOM> epsilon() noexcept
+        {
+            return my_cuda::CUDA_strong_primitive<T, PHANTOM>(std::numeric_limits<T>::epsilon());
+        }
+
+        static
+        constexpr my_cuda::CUDA_strong_primitive<T, PHANTOM> round_error() noexcept
+        {
+            return my_cuda::CUDA_strong_primitive<T, PHANTOM>(std::numeric_limits<T>::round_error());
+        }
+
+        [[maybe_unused]]
+        static
+        constexpr int min_exponent = std::numeric_limits<T>::min_exponent;
+
+        [[maybe_unused]]
+        static
+        constexpr int min_exponent10 = std::numeric_limits<T>::min_exponent10;
+
+        [[maybe_unused]]
+        static
+        constexpr int max_exponent = std::numeric_limits<T>::max_exponent;
+
+        [[maybe_unused]]
+        static
+        constexpr int max_exponent10 = std::numeric_limits<T>::max_exponent10;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_infinity = std::numeric_limits<T>::has_infinity;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_quiet_NaN = std::numeric_limits<T>::has_quiet_NaN;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_signaling_NaN = std::numeric_limits<T>::has_signaling_NaN;
+
+        [[maybe_unused]]
+        static
+        constexpr float_denorm_style has_denorm = std::numeric_limits<T>::has_denorm;
+
+        [[maybe_unused]]
+        static
+        constexpr bool has_denorm_loss = std::numeric_limits<T>::has_denorm_loss;
+
+        [[maybe_unused]]
+        static
+        constexpr bool infinity() noexcept { return std::numeric_limits<T>::has_infinity; }
+
+        [[maybe_unused]]
+        static
+        constexpr bool quiet_NaN() noexcept { return std::numeric_limits<T>::has_quiet_NaN; }
+
+        [[maybe_unused]]
+        static
+        constexpr bool signaling_NaN() noexcept { return std::numeric_limits<T>::has_signaling_NaN; }
+
+        [[maybe_unused]]
+        static
+        constexpr bool denorm_min() noexcept { return std::numeric_limits<T>::has_denorm; }
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_iec559 = std::numeric_limits<T>::is_iec559;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_bounded = std::numeric_limits<T>::is_bounded;
+
+        [[maybe_unused]]
+        static
+        constexpr bool is_modulo = std::numeric_limits<T>::is_modulo;
+
+        [[maybe_unused]]
+        static
+        constexpr bool traps = std::numeric_limits<T>::traps;
+
+        [[maybe_unused]]
+        static
+        constexpr bool tinyness_before = std::numeric_limits<T>::tinyness_before;
+
+        [[maybe_unused]]
+        static
+        constexpr float_round_style round_style = std::numeric_limits<T>::round_style;
+    };
+}
 #endif //MY_CUDA_CUDA_STRONG_PRIMITIVE_H
 // EOF

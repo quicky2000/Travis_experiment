@@ -16,9 +16,16 @@
 */
 
 #include "test_if.h"
+#include "CUDA_strong_primitive.h"
 
 int main()
 {
     launch_kernel();
+    using strong_uint32_t = my_cuda::CUDA_strong_primitive<uint32_t, struct strong_uint32>;
+    if(std::numeric_limits<strong_uint32_t>::max() != std::numeric_limits<uint32_t>::max())
+    {
+	std::cerr << "Bad definition of max" << std::endl;
+        exit(-1);
+    }
 }
 //EOF
