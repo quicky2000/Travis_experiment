@@ -61,7 +61,7 @@ script:
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile my_cuda; make enable_cuda=1 CC=cc; fi
 # Cannot run test as there is no CUDA device on Travis
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then run_test.py $MY_LOCATION/repositories/my_cuda/tests; fi
-  - cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build ; fi
+  - cd $MY_LOCATION ; mkdir cmake_build ; cd cmake_build
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER=/usr/local/cuda-11.7/bin/nvcc $QUICKY_REPOSITORY/my_cuda
   - make
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER=/usr/local/cuda-11.7/bin/nvcc -DENABLE_CUDA_CODE=off $QUICKY_REPOSITORY/my_cuda
