@@ -31,7 +31,7 @@ macro(CUDA_CONVERT_FLAGS EXISTING_TARGET)
         string(REPLACE ";" "," CUDA_flags "${old_flags}")
         # C++ standard set to 11 and not propagated due to issues when compiling with -std=c++17
         set_property(TARGET ${EXISTING_TARGET} PROPERTY COMPILE_OPTIONS
-                     "$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CXX>>:${old_flags}>$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CUDA>>:-Xcompiler=${CUDA_flags}$<$<BOOL:${old_cxx_standard}>:,-std=c++11>$<$<CONFIG:Debug>:,-g>>"
+                     "$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CXX>>:${old_flags}>$<$<BUILD_INTERFACE:$<COMPILE_LANGUAGE:CUDA>>:-Xcompiler=${CUDA_flags}$<$<BOOL:${old_cxx_standard}>:,-std=c++17>$<$<CONFIG:Debug>:,-g>>"
                      )
     endif()
 endmacro()
@@ -45,7 +45,7 @@ macro(HANDLE_CUDA_FILES A_PROJECT_NAME LIST_OF_FILES)
             set_target_properties(${A_PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
             CUDA_CONVERT_FLAGS(${A_PROJECT_NAME})
             if(NOT DEFINED CMAKE_CUDA_STANDARD)
-                set(CMAKE_CUDA_STANDARD 11)
+                set(CMAKE_CUDA_STANDARD 17)
                 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
                 set(CMAKE_CUDA_FLAGS ${CMAKE_CUDA_FLAGS} " --keep --keep-dir=${CMAKE_BINARY_DIR}/${CMAKE_FILES_DIRECTORY} --source-in-ptx --ptxas-options=-v -arch=sm_75 -gencode=arch=compute_75,code=sm_75")
                 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
