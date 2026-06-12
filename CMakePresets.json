@@ -1,0 +1,35 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "CUDA_off",
+            "description": "Default settings for my CMake projects",
+            "generator": "Unix Makefiles",
+            "binaryDir": "$env{QUICKY_BUILD}/my_cuda/cmake-build-vsc",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "NO",
+                "ENABLE_CUDA_CODE": "off",
+                "CMAKE_CUDA_COMPILER": "/usr/local/cuda-12.3/bin/nvcc",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++-12",
+                "CMAKE_CUDA_HOST_COMPILER": "/usr/bin/g++-12",
+                "CMAKE_CUDA_ARCHITECTURES": "75"
+            }
+        },
+        {
+            "name": "CUDA_on",
+            "description": "Default settings for my CMake projects",
+            "generator": "Unix Makefiles",
+            "binaryDir": "$env{QUICKY_BUILD}/my_cuda/cmake-build-vsc",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "NO",
+                "ENABLE_CUDA_CODE": "ON",
+                "CMAKE_CUDA_COMPILER": "/usr/local/cuda-12.3/bin/nvcc",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++-12",
+                "CMAKE_CUDA_HOST_COMPILER": "/usr/bin/g++-12",
+                "CMAKE_CUDA_ARCHITECTURES": "75"
+            }
+        }
+    ]
+}
